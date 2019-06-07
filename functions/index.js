@@ -23,20 +23,19 @@ exports.onBostonWeatherUpdate = functions.firestore
 });
 
 exports.getBostonWeather = functions.https
-    .onRequest((request, response) => {
-      admin.firestore().doc('cities-weather/boston-ma-us').get()
-          .then(snapshot => {
-            const data = snapshot.data(); // Javascript object
-            return response.send(data); // response object knows how to do the conversion from JS object to JSON strings.
-          })
-          .catch(err => {
-            const errorMessage = `Error occurred. Due to : ${err}`;
-            console.error(errorMessage);
-            response.status(500).send(errorMessage);
-          });
+ .onRequest(async (request, response) => {
+  try {
+   const snapshot = await admin.firestore().doc('cities-weather/boston-ma-us').get();
+   const data = snapshot.data(); // Javascript object
+   return response.send(data); // response object knows how to do the conversion from JS object to JSON strings.
+  } catch (e) {
+   const errorMessage = `Error occurred. Due to : ${err}`;
+   console.error(errorMessage);
+   return response.status(500).send(errorMessage);
+  }
 });
 
 exports.helloWorld = functions.https
-   .onRequest((request, response) => {
-     response.send("Hello from Firebase!");
+  .onRequest((request, response) => {
+    response.send("Hello from Firebase!");
 });
